@@ -1,0 +1,740 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Documentation",
+        "description": "Documentation API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/auth/token": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get authentication token",
+                "operationId": "361b20fd5a0ea574c90f77e6b8ef0d37",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Get Token successful"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJK..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/api/companies": {
+            "get": {
+                "tags": [
+                    "Companies"
+                ],
+                "summary": "List Companies",
+                "description": "Mengambil daftar perusahaan dengan fitur pencarian dan pengurutan.",
+                "operationId": "54f966c056050f9db4fff6ee5a45a76a",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Pencarian nama perusahaan",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Kolom untuk pengurutan (contoh: name, email, created_at)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "order",
+                        "in": "query",
+                        "description": "Jenis pengurutan (asc atau desc)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar perusahaan berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "email": {
+                                                        "type": "string"
+                                                    },
+                                                    "phone": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_by": {
+                                                        "type": "integer"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Companies"
+                ],
+                "summary": "Create Company",
+                "description": "Membuat perusahaan baru sekaligus menambahkan manager default.",
+                "operationId": "6a3d5dfe9a5d3667f99db8da0b32a43a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "PT. Contoh Perusahaan"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "contact@contoh.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "08123456789"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Perusahaan berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company created successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validasi gagal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The name field is required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/companies/{id}": {
+            "get": {
+                "tags": [
+                    "Companies"
+                ],
+                "summary": "Detail Company",
+                "description": "Mengambil detail perusahaan berdasarkan ID.",
+                "operationId": "69b28e2a4d30e75bcc4a6076d3cfccf2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID perusahaan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail perusahaan berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "type": "string"
+                                        },
+                                        "phone": {
+                                            "type": "string"
+                                        },
+                                        "created_by": {
+                                            "type": "integer"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Perusahaan tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Companies"
+                ],
+                "summary": "Delete Company",
+                "description": "Menghapus perusahaan berdasarkan ID.",
+                "operationId": "f7e6826d75916cf716c36da91f60ddbc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID perusahaan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Perusahaan berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Perusahaan tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "List Users",
+                "description": "Mengambil daftar semua pengguna. Mendukung pencarian berdasarkan nama.",
+                "operationId": "c457726701591d1183b53aa71fc13441",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Pencarian nama pengguna",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar pengguna berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "email": {
+                                                        "type": "string"
+                                                    },
+                                                    "address": {
+                                                        "type": "string"
+                                                    },
+                                                    "company_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "role_master": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_by": {
+                                                        "type": "integer"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create User",
+                "description": "Membuat pengguna baru dengan role 'employee'.",
+                "operationId": "1a63883edb751cb640a2f6f516236f49",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "phone",
+                                    "address",
+                                    "company_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "johndoe@example.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "08123456789"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "123 Street Name"
+                                    },
+                                    "company_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pengguna berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Employee created successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validasi gagal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The email field is required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Tidak memiliki izin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You don't have permission on this action"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Detail User",
+                "description": "Mengambil detail pengguna berdasarkan ID.",
+                "operationId": "7485eec5c23204491843f9a15f325510",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID pengguna",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail pengguna berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "type": "string"
+                                        },
+                                        "address": {
+                                            "type": "string"
+                                        },
+                                        "company_id": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pengguna tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update User",
+                "description": "Memperbarui data pengguna berdasarkan ID.",
+                "operationId": "b9091397c8b25f12c6adb74be6ce3a5a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID pengguna",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "phone",
+                                    "address"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Jane Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "janedoe@example.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "08198765432"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "456 Another Street"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pengguna berhasil diperbarui",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Employee updated successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pengguna tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete User",
+                "description": "Menghapus pengguna berdasarkan ID.",
+                "operationId": "e169ebcc01eeee2f5e57e5bfc064bc7f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID pengguna",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pengguna berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pengguna tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Authentication"
+        },
+        {
+            "name": "Companies",
+            "description": "Companies"
+        },
+        {
+            "name": "Users",
+            "description": "Users"
+        }
+    ]
+}
